@@ -1,0 +1,29 @@
+<div class="container mt-3">
+    <h3>Edit Task</h3>
+
+    @if(task()){
+        <form (ngSubmit)="updateTask()">
+            <div class="mb-2 ">
+                <input class="form-control" [(ngModel)]="task()!.title" name="title" required #title="ngModel">
+                @if(title.invalid && title.touched){
+                    <small class="text-danger">*Title is required</small>
+                }
+            </div>
+            <div class="mb-2">
+                <input class="form-control" [(ngModel)]="task()!.description" name="description">
+            </div>
+
+            <div class="form-check mb-2">
+                <input type="checkbox" name="isCompleted" [(ngModel)]="task()!.isCompleted" class="form-check-input">
+                <label class="form-check-label">Completed</label>
+            </div>
+
+            <button class="btn btn-primary" [disabled]="!task()?.title?.trim()">Update</button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="goBack()">
+                Cancel
+            </button>
+        </form>
+    } @else {
+        <p>Loading...</p>
+    }
+</div>  

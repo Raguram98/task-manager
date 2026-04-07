@@ -1,0 +1,30 @@
+<div class="container mt-3">
+    <table class="table table-bordered">
+        <thead class="text-center">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @for(task of tasks(); track task.id){
+            <tr>
+                <td>{{task.title}}</td>
+                <td>{{task.description}}</td>
+                <td>
+                    <input type="checkbox" [(ngModel)]="task.isCompleted" (change)="toggleComplete(task)">
+                    {{task.isCompleted ? 'Completed' : 'Pending'}}
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-primary btn-sm me-2" (click)="editTask(task.id)">Edit</button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-success mb-3" (click)="gotoAdd()">Add Task</button>
+</div>

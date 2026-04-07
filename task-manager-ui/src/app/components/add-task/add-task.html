@@ -1,0 +1,18 @@
+<div class="container">
+    <h3 class="mb-4">Add Task</h3>
+    <form (ngSubmit)="addTask()">
+        <div class="mb-3">
+            <input class="form-control" [(ngModel)]="task.title" name="title" placeholder="Title" required #title="ngModel">
+            @if (title.invalid && title.touched) {
+                <small class="text-danger">*Title is required</small>
+            }
+        </div>
+
+        <div class="mb-3">
+            <input class="form-control" [(ngModel)]="task.description" name="description" placeholder="Description">
+        </div>
+
+        <button class="btn btn-success" [disabled]="!task.title.trim()">Save</button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="goBack()">Cancel</button>
+    </form>
+</div>
