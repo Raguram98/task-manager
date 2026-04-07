@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TaskItem } from '../models/task.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  private baseUrl = 'https://localhost:7090/api/tasks';
+  private baseUrl = `${environment.apiUrl}/tasks`;
 
   constructor(private http: HttpClient){}
 
@@ -18,11 +19,11 @@ export class TaskService {
     return this.http.get<TaskItem>(`${this.baseUrl}/${id}`);
   }
 
-  addTask(task: any){
+  addTask(task: TaskItem){
     return this.http.post(this.baseUrl, task);
   }
 
-  updateTask(id: number, task: any){
+  updateTask(id: number, task: TaskItem){
     return this.http.put(`${this.baseUrl}/${id}`, task);
   }
 
