@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskMgmt.DTOs;
+using TaskMgmt.Service;
 
 namespace TaskMgmt.Controllers
 {

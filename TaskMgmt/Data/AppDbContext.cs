@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskMgmt.Model;
 
-namespace TaskMgmt
+namespace TaskMgmt.Data
 {
     public class AppDbContext : DbContext
     {

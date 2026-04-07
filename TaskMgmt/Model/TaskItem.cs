@@ -1,4 +1,4 @@
-﻿namespace TaskMgmt
+﻿namespace TaskMgmt.Model
 {
     public class TaskItem
     {

@@ -1,4 +1,8 @@
-﻿namespace TaskMgmt
+﻿using TaskMgmt.Data;
+using TaskMgmt.DTOs;
+using TaskMgmt.Model;
+
+namespace TaskMgmt.Service
 {
     public class TaskService : ITaskService
     {

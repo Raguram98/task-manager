@@ -1,4 +1,7 @@
-﻿namespace TaskMgmt
+﻿using TaskMgmt.DTOs;
+using TaskMgmt.Model;
+
+namespace TaskMgmt.Service
 {
     public interface ITaskService
     {
