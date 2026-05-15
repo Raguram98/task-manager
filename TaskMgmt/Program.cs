@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=taskmanager.db"));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=/app/taskmanager.db"));
 builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddCors(options =>
@@ -33,5 +33,11 @@ app.UseCors("AllowAll");
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
 
 app.Run();
