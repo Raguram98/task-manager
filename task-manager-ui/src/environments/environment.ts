@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://localhost:7090/api'
+  apiUrl: 'https://task-manager-backend-60mq.onrender.com/api'
 };
