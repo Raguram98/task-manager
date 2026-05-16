@@ -15,7 +15,7 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
-        policy => policy.WithOrigins("http://localhost:4200", "https://task-manager-backend-60mq.onrender.com").AllowAnyMethod().AllowAnyHeader());
+        policy => policy.WithOrigins("http://localhost:4200", "https://task-manager-two-liard-18.vercel.app").AllowAnyMethod().AllowAnyHeader());
 });
 
 var app = builder.Build();
@@ -24,9 +24,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseCors("AllowAngularApp");
 
