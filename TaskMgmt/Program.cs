@@ -15,7 +15,7 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
-        policy => policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
+        policy => policy.WithOrigins("http://localhost:4200", "https://task-manager-backend-60mq.onrender.com").AllowAnyMethod().AllowAnyHeader());
 });
 
 var app = builder.Build();
