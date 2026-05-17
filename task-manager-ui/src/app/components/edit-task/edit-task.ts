@@ -1,42 +1,65 @@
-import { ChangeDetectorRef, Component, OnInit, signal, Signal } from '@angular/core';
-import { TaskItem } from '../../models/task.model';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../../services/task.service';
-import { FormsModule } from "@angular/forms";
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-edit-task',
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './edit-task.html',
   styleUrl: './edit-task.css',
 })
 export class EditTask implements OnInit {
-  task= signal<TaskItem | null>(null);
+  private fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private taskService = inject(TaskService);
+  private router = inject(Router);
+  private toast = inject(ToastService);
 
-  constructor(private route: ActivatedRoute, private taskService: TaskService, private router: Router, private cd: ChangeDetectorRef ) {}
-  
-  ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+  loading = signal(true);
+  taskId  = 0;
 
-    this.taskService.getTask(id).subscribe(res => {
-      console.log("DATA:", res);
-      this.task.set(res); 
+  // form starts undefined — we build it after the task loads
+  form = this.fb.group({
+    title:       ['', [Validators.required, Validators.minLength(2)]],
+    description: [''],
+    priority:    ['medium'],
+    isCompleted: [false],
+  });
+
+  get titleCtrl() { return this.form.get('title')!; }
+
+  ngOnInit() {
+    // ActivatedRoute reads the :id from the URL  (e.g. /edit/3 → id = 3)
+    this.taskId = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.taskService.getTask(this.taskId).subscribe({
+      next: task => {
+        // Patch fills the form fields with existing task data
+        this.form.patchValue({
+          title:       task.title,
+          description: task.description,
+          isCompleted: task.isCompleted
+        });
+        this.loading.set(false);
+      },
+      error: () => {
+        this.toast.error('Could not load task.');
+        this.router.navigate(['/']);
+      }
     });
   }
 
-  updateTask(){
-    const t = this.task()
-    if (!t) {
-      alert("Task not loaded yet");
-      return;
-    }
-
-    this.taskService.updateTask(t.id, t).subscribe(() => {
-      this.router.navigate(['/']);
+  updateTask() {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    const payload = { id: this.taskId, ...this.form.value } as any;
+    this.taskService.updateTask(this.taskId, payload).subscribe({
+      next: () => { this.toast.success('Task updated!'); this.router.navigate(['/']); },
+      error: ()  => this.toast.error('Failed to update task.')
     });
   }
-  
-  goBack(){
-    this.router.navigate(['/']);
-  }
+
+  goBack() { this.router.navigate(['/']); }
 }

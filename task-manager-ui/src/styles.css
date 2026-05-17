@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+  --font-sans:    'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+
+  --color-brand-dark: #0861B1;
+  --color-brand-mid: #1CA0E3;
+  --color-brand-light: #E6F4FF;
+}

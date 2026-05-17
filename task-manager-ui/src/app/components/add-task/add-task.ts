@@ -1,33 +1,44 @@
+import { Component, inject } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TaskItem } from '../../models/task.model';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TaskService } from '../../services/task.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-add-task',
-  imports: [FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './add-task.html',
   styleUrl: './add-task.css',
 })
 export class AddTask {
-  task: TaskItem = {
-    id: 0,
-    title: '',
-    description: '',
-    isCompleted: false
-  }
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private taskService = inject(TaskService);
+  private toast = inject(ToastService);
 
-  constructor(private router: Router, private taskService: TaskService) {}
+  // FormBuilder creates a reactive form.
+  // Each field gets: [initialValue, [validators]]
+  // Validators run automatically — no manual if/else checks needed.
+  form = this.fb.group({
+    title:       ['', [Validators.required, Validators.minLength(2)]],
+    description: ['']
+  });
 
-  addTask(){
-    this.taskService.addTask(this.task).subscribe(() => {
-      this.router.navigate(['/']);
+  // Shortcut so the template can access form.get('title') more cleanly
+  get titleCtrl() { return this.form.get('title')!; }
+
+  addTask() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched(); // shows validation errors
+      return;
+    }
+    const payload = { ...this.form.value, id: 0, isCompleted: false } as any;
+    this.taskService.addTask(payload).subscribe({
+      next: () => { this.toast.success('Task created!'); this.router.navigate(['/']); },
+      error: ()  => this.toast.error('Failed to create task.')
     });
   }
 
-  goBack(){
-    this.router.navigate(['/']);
-  }
+  goBack() { this.router.navigate(['/']); }
 }

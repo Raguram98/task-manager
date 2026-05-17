@@ -1,0 +1,21 @@
+@if (loading.isLoading()) {
+  <div class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 
+              bg-slate-950/80 backdrop-blur-sm">
+  
+    <!-- Spinner Container: Set the size here, and make it 'relative' -->
+    <div class="relative w-12 h-12">
+      <!-- Background Ring -->
+      <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
+      <!-- Spinning Top Ring -->
+      <div class="absolute inset-0 rounded-full border-4 border-transparent 
+                  border-t-violet-500 animate-spin"></div>
+    </div>
+
+    <!-- Text Group -->
+    <div class="flex flex-col items-center gap-1 text-center">
+      <p class="text-sm font-medium text-slate-200 tracking-wide">Loading</p>
+      <p class="text-xs text-slate-500">Please wait...</p>
+    </div>
+    
+  </div>
+}

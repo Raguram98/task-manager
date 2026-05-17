@@ -1,18 +1,79 @@
-<div class="container">
-    <h3 class="mb-4">Add Task</h3>
-    <form (ngSubmit)="addTask()">
-        <div class="mb-3">
-            <input class="form-control" [(ngModel)]="task.title" name="title" placeholder="Title" required #title="ngModel">
-            @if (title.invalid && title.touched) {
-                <small class="text-danger">*Title is required</small>
-            }
-        </div>
+<!-- Dark overlay behind the modal -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-4">
 
-        <div class="mb-3">
-            <input class="form-control" [(ngModel)]="task.description" name="description" placeholder="Description">
-        </div>
+  <!-- Modal box -->
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md
+              shadow-2xl">
 
-        <button class="btn btn-success" [disabled]="!task.title.trim()">Save</button>
-        <button type="button" class="btn btn-secondary ms-2" (click)="goBack()">Cancel</button>
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-slate-800">
+      <h2 class="font-display font-bold text-lg">New <span class="text-violet-400">Task</span></h2>
+      <button (click)="goBack()"
+        class="text-slate-500 hover:text-slate-200 transition-colors
+               w-8 h-8 flex items-center justify-center rounded-lg
+               hover:bg-slate-800"
+        aria-label="Close">
+        ✕
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="addTask()" novalidate class="p-6 flex flex-col gap-5">
+
+      <!-- Title field -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-slate-400 uppercase tracking-wider">
+          Title <span class="text-red-400">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="e.g. Review pull request"
+          class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5
+                 text-slate-100 text-sm placeholder:text-slate-600
+                 focus:outline-none focus:border-violet-500 focus:ring-2
+                 focus:ring-violet-500/20 transition-all"
+          [class.border-red-500]="titleCtrl.invalid && titleCtrl.touched"
+        />
+        <!-- Validation error message -->
+        @if (titleCtrl.invalid && titleCtrl.touched) {
+          <p class="text-xs text-red-400">
+            @if (titleCtrl.hasError('required'))  { Title is required. }
+            @if (titleCtrl.hasError('minlength')) { Must be at least 2 characters. }
+          </p>
+        }
+      </div>
+
+      <!-- Description field -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-slate-400 uppercase tracking-wider">
+          Description
+        </label>
+        <textarea
+          formControlName="description"
+          placeholder="Optional — add more context"
+          rows="3"
+          class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5
+                 text-slate-100 text-sm placeholder:text-slate-600 resize-none
+                 focus:outline-none focus:border-violet-500 focus:ring-2
+                 focus:ring-violet-500/20 transition-all"
+        ></textarea>
+      </div>
+      
+      <!-- Footer buttons -->
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" (click)="goBack()"
+          class="px-4 py-2 rounded-xl text-sm font-medium text-slate-400
+                 hover:text-slate-200 hover:bg-slate-800 transition-all">
+          Cancel
+        </button>
+        <button type="submit"
+          class="px-5 py-2 rounded-xl text-sm font-medium hover:bg-violet-500
+                 hover:bg-violet-500 text-white transition-colors">
+          Create task
+        </button>
+      </div>
+
     </form>
+  </div>
 </div>
