@@ -484,3 +484,5 @@ $RECYCLE.BIN/
 dist/
 
 *.db
+TaskMgmt/taskmanager-dev.db-shm
+TaskMgmt/taskmanager-dev.db-wal
