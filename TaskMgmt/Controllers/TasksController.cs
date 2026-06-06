@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskMgmt.DTOs;
+using TaskMgmt.Extensions;
 using TaskMgmt.Service;
 
 namespace TaskMgmt.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;
@@ -16,26 +19,31 @@ namespace TaskMgmt.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get()
-        { 
-            return Ok(_taskService.GetTasks());
+        public async Task<ActionResult> Get()
+        {
+            var userId = User.GetUserId();
+            var tasks = await _taskService.GetTasksAsync(userId);
+            return Ok(tasks);
         }
+
         [HttpGet("{id}")]
-        public ActionResult GetById(int id)
-            {
-            var result = _taskService.GetById(id);
+        public async Task<ActionResult> GetById(Guid id)
+        {
+            var userId = User.GetUserId();
+            var result = await _taskService.GetByIdAsync(id, userId);
             if (result is null) return NotFound();
 
-            return Ok(result);
+            return Ok(result.ToDto());
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] TaskItemDto request)
+        public async Task<ActionResult> Create([FromBody] TaskItemDto request)
         {
             try
             {
-                var result = _taskService.Create(request);
-                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+                var userId = User.GetUserId();
+                var result = await _taskService.CreateAsync(request, userId);
+                return CreatedAtAction(nameof(GetById), new { id = result!.Id }, result.ToDto());
             }
             catch (ArgumentException ex)
             {
@@ -44,11 +52,12 @@ namespace TaskMgmt.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] TaskItemDto updatedTask)
+        public async Task<ActionResult> Update(Guid id, [FromBody] TaskItemDto updatedTask)
         {
             try
             {
-                var result = _taskService.Update(id, updatedTask);
+                var userId = User.GetUserId();
+                var result = await _taskService.UpdateAsync(id, updatedTask, userId);
                 if(result is null) 
                     return NotFound();
 
@@ -61,9 +70,10 @@ namespace TaskMgmt.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            var task = _taskService.Delete(id);
+            var userId = User.GetUserId();
+            var task = await _taskService.DeleteAsync(id, userId);
             if (task is false) return NotFound();
 
             return NoContent();

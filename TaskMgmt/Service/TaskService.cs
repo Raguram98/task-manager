@@ -1,4 +1,5 @@
-﻿using TaskMgmt.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskMgmt.Data;
 using TaskMgmt.DTOs;
 using TaskMgmt.Model;
 
@@ -13,20 +14,20 @@ namespace TaskMgmt.Service
             _context = context;   
         }
 
-        public List<TaskItem> GetTasks()
+        public async Task<List<TaskItem>> GetTasksAsync(Guid userId)
         {
-            return _context.Tasks.ToList();
+            return await _context.Tasks.Where(t => t.UserId == userId).ToListAsync();
         }
 
-        public TaskItem? GetById(int id)
+        public async Task<TaskItem?> GetByIdAsync(Guid id, Guid userId)
         {
-            var result = _context.Tasks.Find(id);
+            var result = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
             if (result is null) return null;
 
             return result;
         }
 
-        public TaskItem? Create(TaskItemDto request)
+        public async Task<TaskItem?> CreateAsync(TaskItemDto request, Guid userId)
         {
             if (string.IsNullOrWhiteSpace(request.Title))
                 throw new ArgumentException("Title is required");
@@ -37,42 +38,43 @@ namespace TaskMgmt.Service
                 Title = request.Title,
                 Description = request.Description,
                 IsCompleted = request.IsCompleted,
+                UserId = userId
             };
 
             _context.Tasks.Add(task);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return task;
         } 
 
-        public TaskItem? Update (int id, TaskItemDto request)
+            public async Task<TaskItem?> UpdateAsync(Guid id, TaskItemDto request, Guid userId)
+            {
+                var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+
+                if (task is null)
+                    return null;
+
+                if (string.IsNullOrWhiteSpace(request.Title))
+                    throw new ArgumentException("Title is required");
+
+                task.Title = request.Title; 
+                task.Description = request.Description;
+                task.IsCompleted = request.IsCompleted;
+
+                await _context.SaveChangesAsync();
+
+                return task;
+            }
+
+        public async Task<bool> DeleteAsync(Guid id, Guid userId)
         {
-            var task = _context.Tasks.Find(id);
-
-            if (task is null)
-                return null;
-
-            if (string.IsNullOrWhiteSpace(request.Title))
-                throw new ArgumentException("Title is required");
-
-            task.Title = request.Title;
-            task.Description = request.Description;
-            task.IsCompleted = request.IsCompleted;
-
-            _context.SaveChanges();
-
-            return task;
-        }
-
-        public bool Delete(int id)
-        {
-            var task = _context.Tasks.Find(id);
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
             if (task is null) return false;
 
             _context.Tasks.Remove(task);
             _context.SaveChanges();
 
             return true;
-        }
+        } 
     }
 }

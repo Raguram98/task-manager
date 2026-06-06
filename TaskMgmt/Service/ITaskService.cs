@@ -5,10 +5,10 @@ namespace TaskMgmt.Service
 {
     public interface ITaskService
     {
-        List<TaskItem> GetTasks();
-        TaskItem? GetById(int id);
-        TaskItem? Create(TaskItemDto request);
-        TaskItem? Update(int id, TaskItemDto request);
-        bool Delete(int id);
+        Task<List<TaskItem>> GetTasksAsync(Guid userId);
+        Task<TaskItem?> GetByIdAsync(Guid id, Guid userId);
+        Task<TaskItem?> CreateAsync(TaskItemDto request, Guid userId);
+        Task<TaskItem?> UpdateAsync(Guid id, TaskItemDto request, Guid userId);
+        Task<bool> DeleteAsync(Guid id, Guid userId);
     }
 }
