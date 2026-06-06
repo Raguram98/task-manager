@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskMgmt.Data;
+using TaskMgmt.DTO;
 using TaskMgmt.DTOs;
 using TaskMgmt.Model;
 
@@ -27,7 +28,7 @@ namespace TaskMgmt.Service
             return result;
         }
 
-        public async Task<TaskItem?> CreateAsync(TaskItemDto request, Guid userId)
+        public async Task<TaskItem?> CreateAsync(CreateUpdateTaskDto request, Guid userId)
         {
             if (string.IsNullOrWhiteSpace(request.Title))
                 throw new ArgumentException("Title is required");
@@ -47,7 +48,7 @@ namespace TaskMgmt.Service
             return task;
         } 
 
-            public async Task<TaskItem?> UpdateAsync(Guid id, TaskItemDto request, Guid userId)
+            public async Task<TaskItem?> UpdateAsync(Guid id, CreateUpdateTaskDto request, Guid userId)
             {
                 var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
 

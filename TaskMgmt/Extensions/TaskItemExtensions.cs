@@ -9,6 +9,7 @@ namespace TaskMgmt.Extensions
         {
             return new TaskItemDto
             {
+                Id = task.Id,
                 Title = task.Title,
                 Description = task.Description,
                 IsCompleted = task.IsCompleted

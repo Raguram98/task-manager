@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TaskMgmt.DTOs
+﻿namespace TaskMgmt.DTO
 {
-    public class TaskItemDto
+    public class CreateUpdateTaskDto
     {
-        public Guid Id { get; set; }
         public string Title { get; set; } = String.Empty;
         public string Description { get; set; } = String.Empty;
         public bool IsCompleted { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskMgmt.DTO;
 using TaskMgmt.DTOs;
 using TaskMgmt.Extensions;
 using TaskMgmt.Service;
@@ -23,7 +24,7 @@ namespace TaskMgmt.Controllers
         {
             var userId = User.GetUserId();
             var tasks = await _taskService.GetTasksAsync(userId);
-            return Ok(tasks);
+            return Ok(tasks.Select(t => t.ToDto()).ToList());
         }
 
         [HttpGet("{id}")]
@@ -37,7 +38,7 @@ namespace TaskMgmt.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] TaskItemDto request)
+        public async Task<ActionResult> Create([FromBody] CreateUpdateTaskDto request)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace TaskMgmt.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(Guid id, [FromBody] TaskItemDto updatedTask)
+        public async Task<ActionResult> Update(Guid id, [FromBody] CreateUpdateTaskDto updatedTask)
         {
             try
             {
