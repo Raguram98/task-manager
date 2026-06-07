@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-[#06141F] flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <h1 class="font-display font-bold text-3xl text-slate-100 mb-2">
+        Task<span class="text-violet-400">Flow</span>
+      </h1>
+      <p class="text-slate-400">
+        @if (isRegister) {
+          Create an account to get started
+        } @else {
+          Sign in to manage your tasks
+        }
+      </p>
+    </div>
+
+    <div class="bg-[#0A1E30] border border-violet-500/30 rounded-2xl p-6">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+        
+        <!-- Name field (register only) -->
+        @if (isRegister) {
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              Name <span class="text-red-400">*</span>
+            </label>
+            <input type="text" formControlName="name" placeholder="Your name"
+              class="bg-[#06141F] border border-violet-500/40 rounded-xl px-4 py-2.5
+                     text-slate-100 text-sm placeholder:text-slate-600
+                     focus:outline-none focus:border-violet-400 focus:ring-2
+                     focus:ring-violet-400/20 transition-all"
+              [class.border-red-500]="nameCtrl.invalid && nameCtrl.touched" />
+            @if (nameCtrl.invalid && nameCtrl.touched) {
+              <p class="text-xs text-red-400">
+                @if (nameCtrl.hasError('required'))   { Name is required. }
+                @if (nameCtrl.hasError('minlength'))  { At least 3 characters. }
+              </p>
+            }
+          </div>
+        }
+
+        <!-- Email field (both modes) -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-slate-400 uppercase tracking-wider">
+            Email <span class="text-red-400">*</span>
+          </label>
+          <input type="email" formControlName="email" placeholder="your@email.com"
+            class="bg-[#06141F] border border-violet-500/40 rounded-xl px-4 py-2.5
+                   text-slate-100 text-sm placeholder:text-slate-600
+                   focus:outline-none focus:border-violet-400 focus:ring-2
+                   focus:ring-violet-400/20 transition-all"
+            [class.border-red-500]="emailCtrl.invalid && emailCtrl.touched" />
+          @if (emailCtrl.invalid && emailCtrl.touched) {
+            <p class="text-xs text-red-400">
+              @if (emailCtrl.hasError('required'))  { Email is required. }
+              @if (emailCtrl.hasError('email'))     { Enter a valid email. }
+            </p>
+          }
+        </div>
+
+        <!-- Password field (both modes) -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-slate-400 uppercase tracking-wider">
+            Password <span class="text-red-400">*</span>
+          </label>
+          <input type="password" formControlName="password" placeholder="••••••••"
+            class="bg-[#06141F] border border-violet-500/40 rounded-xl px-4 py-2.5
+                   text-slate-100 text-sm placeholder:text-slate-600
+                   focus:outline-none focus:border-violet-400 focus:ring-2
+                   focus:ring-violet-400/20 transition-all"
+            [class.border-red-500]="passwordCtrl.invalid && passwordCtrl.touched" />
+          @if (passwordCtrl.invalid && passwordCtrl.touched) {
+            <p class="text-xs text-red-400">
+              @if (passwordCtrl.hasError('required'))   { Password is required. }
+              @if (passwordCtrl.hasError('minlength'))  { At least  characters. }
+              @if (passwordCtrl.hasError('pattern'))    { Must include uppercase, lowercase, number, and special character. }
+            </p>
+          }
+        </div>
+
+        <button type="submit" [disabled]="form.invalid"
+          class="bg-gradient-to-r from-violet-600 to-violet-400
+                 disabled:opacity-50 text-white text-sm font-medium px-5 py-2.5 rounded-xl 
+                 transition-colors cursor-pointer">
+          {{ buttonText() }}
+        </button>
+      </form>
+
+      <div class="mt-6 pt-6 border-t border-violet-500/30 text-center">
+        <p class="text-sm text-slate-400">
+          <button (click)="toggleMode()" 
+            class="text-violet-400 hover:text-violet-300 transition-colors cursor-pointer">
+            {{ toggleText() }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -78,7 +78,7 @@ export class TaskList {
     });
   }
 
-  goAdd(){ this.router.navigate(['/add']); }
-  goEdit(id:number){ this.router.navigate(['/edit', id]); }
+  goAdd(){ this.router.navigate(['/tasks/add']); }
+  goEdit(id: string){ this.router.navigate(['/tasks/edit', id]); }
   setFilter(f: Filter) { this.filter.set(f); }
 }

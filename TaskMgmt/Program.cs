@@ -20,7 +20,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
-        policy => policy.WithOrigins("http://localhost:4200", "https://task-manager-two-liard-18.vercel.app").AllowAnyMethod().AllowAnyHeader());
+        policy => policy.WithOrigins("http://localhost:4300", "https://task-manager-two-liard-18.vercel.app").AllowAnyMethod().AllowAnyHeader());
 });
 
 builder.Services.AddAuthentication(options =>

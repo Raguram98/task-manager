@@ -8,7 +8,24 @@
   "projects": {
     "task-manager-ui": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:service": {
+          "skipTests": true,
+          "path": "src/app/services"
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true,
+          "path": "src/app/guards"
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true,
+          "path": "src/app/interceptors"
+        },
+        "@schematics/angular:component": {
+          "skipTests": true,
+          "path": "src/app/components"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -66,6 +83,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 4300
+          },
           "configurations": {
             "production": {
               "buildTarget": "task-manager-ui:build:production"

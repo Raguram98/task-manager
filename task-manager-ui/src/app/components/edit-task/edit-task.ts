@@ -19,13 +19,12 @@ export class EditTask implements OnInit {
   private toast = inject(ToastService);
 
   loading = signal(true);
-  taskId  = 0;
+  taskId  = '';
 
   // form starts undefined — we build it after the task loads
   form = this.fb.group({
     title:       ['', [Validators.required, Validators.minLength(2)]],
-    description: [''],
-    priority:    ['medium'],
+    description: [''],  
     isCompleted: [false],
   });
 
@@ -33,7 +32,7 @@ export class EditTask implements OnInit {
 
   ngOnInit() {
     // ActivatedRoute reads the :id from the URL  (e.g. /edit/3 → id = 3)
-    this.taskId = Number(this.route.snapshot.paramMap.get('id'));
+    this.taskId = this.route.snapshot.paramMap.get('id')!;
 
     this.taskService.getTask(this.taskId).subscribe({
       next: task => {
@@ -56,7 +55,7 @@ export class EditTask implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const payload = { id: this.taskId, ...this.form.value } as any;
     this.taskService.updateTask(this.taskId, payload).subscribe({
-      next: () => { this.toast.success('Task updated!'); this.router.navigate(['/']); },
+      next: () => { this.toast.success('Task updated!'); this.router.navigate(['/tasks']); },
       error: ()  => this.toast.error('Failed to update task.')
     });
   }

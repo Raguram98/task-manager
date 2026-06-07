@@ -1,6 +1,16 @@
 <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
     <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-        <span class="font-display text-xl font-bold tracking-tight">
-            Task <span class="text-violet-400">Flow</span></span>
+        <a [routerLink]="authService.isLoggedIn() ? '/tasks' : '/'" class="font-display text-xl font-bold tracking-tight">
+            Task<span class="text-violet-400">Flow</span>
+        </a>
+
+        @if (authService.isLoggedIn()) {
+            <button (click)="authService.logout()" 
+                class="flex items-center gap-2 border border-violet-500/90
+                hover:bg-violet-500 text-white text-sm font-medium px-4 py-2 
+                rounded-xl transition-colors ml-auto">
+                Logout
+            </button>
+        }   
     </div>
 </header>

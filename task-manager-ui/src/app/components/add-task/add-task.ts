@@ -35,10 +35,10 @@ export class AddTask {
     }
     const payload = { ...this.form.value, id: 0, isCompleted: false } as any;
     this.taskService.addTask(payload).subscribe({
-      next: () => { this.toast.success('Task created!'); this.router.navigate(['/']); },
+      next: () => { this.toast.success('Task created!'); this.router.navigate(['/tasks']); },
       error: ()  => this.toast.error('Failed to create task.')
     });
   }
 
-  goBack() { this.router.navigate(['/']); }
+  goBack() { this.router.navigate(['/tasks']); }
 }
