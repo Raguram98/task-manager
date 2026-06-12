@@ -486,3 +486,5 @@ dist/
 *.db
 TaskMgmt/taskmanager-dev.db-shm
 TaskMgmt/taskmanager-dev.db-wal
+
+TaskMgmt/appsettings.Production.json
