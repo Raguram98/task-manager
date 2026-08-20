@@ -1,0 +1,90 @@
+name: Deploy Backend to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'TaskMgmt/**'
+      - '.github/workflows/deploy-backend.yml'
+
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: |
+          cd TaskMgmt
+          dotnet restore
+
+      - name: Build
+        run: |
+          cd TaskMgmt
+          dotnet build -c Release --no-restore
+
+      # Optional: Run tests if you have them
+      - name: Run tests (if applicable)
+        run: |
+          cd TaskMgmt
+          # dotnet test -c Release --no-build --verbosity normal
+        continue-on-error: true
+
+      - name: Publish
+        run: |
+          cd TaskMgmt
+          dotnet publish -c Release -o ./publish --self-contained false --runtime linux-x64
+
+      - name: Create deployment package
+        run: |
+          cd TaskMgmt/publish
+          zip -r ../../app.zip .
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_APPSERVICE_NAME }}
+          publish-profile: ${{ secrets.AZURE_APPSERVICE_PUBLISH_PROFILE }}
+          package: './app.zip'
+
+      - name: Wait for app startup
+        run: |
+          echo "Waiting for app to start..."
+          sleep 30
+
+      - name: Health check
+        run: |
+          echo "Checking API health..."
+          API_URL="https://${{ secrets.AZURE_APPSERVICE_NAME }}.azurewebsites.net"
+          
+          # Try to curl the API endpoint
+          for i in {1..5}; do
+            echo "Attempt $i..."
+            if curl -f -s -o /dev/null -w "%{http_code}" "$API_URL/openapi/v1.json"; then
+              echo "✅ API is healthy"
+              exit 0
+            fi
+            echo "Retrying in 5 seconds..."
+            sleep 5
+          done
+          
+          echo "❌ API health check failed after 5 attempts"
+          exit 1
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "================================"
+          echo "Deployment completed"
+          echo "API URL: https://${{ secrets.AZURE_APPSERVICE_NAME }}.azurewebsites.net"
+          echo "================================"
