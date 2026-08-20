@@ -487,5 +487,7 @@ dist/
 TaskMgmt/taskmanager-dev.db-shm
 TaskMgmt/taskmanager-dev.db-wal
 
-TaskMgmt/appsettings.Production.json
-TaskMgmt/appsettings.Development.json
+# User secrets (local development only)
+appsettings.Local.json
+secrets.json
+*.local.json

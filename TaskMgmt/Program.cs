@@ -49,13 +49,22 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    app.Logger.LogInformation("Running database migrations...");
     db.Database.Migrate();
+    app.Logger.LogInformation("Migrations completed.");
 }
+
+app.MapOpenApi();
+
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/openapi/v1.json", "Task Management API");
+    options.RoutePrefix = "swagger";
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseHttpsRedirection();
 }
 
