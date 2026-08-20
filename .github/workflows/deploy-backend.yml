@@ -65,9 +65,8 @@ jobs:
       - name: Health check
         run: |
           echo "Checking API health..."
-          API_URL="https://${{ secrets.AZURE_APPSERVICE_NAME }}.azurewebsites.net"
+          API_URL="https://${{ secrets.AZURE_APP_SERVICE_DOMAIN }}"
           
-          # Try to curl the API endpoint
           for i in {1..5}; do
             echo "Attempt $i..."
             if curl -f -s -o /dev/null -w "%{http_code}" "$API_URL/openapi/v1.json"; then
@@ -86,5 +85,5 @@ jobs:
         run: |
           echo "================================"
           echo "Deployment completed"
-          echo "API URL: https://${{ secrets.AZURE_APPSERVICE_NAME }}.azurewebsites.net"
+          echo "API URL: https://${{ secrets.AZURE_APP_SERVICE_DOMAIN }}"
           echo "================================"
