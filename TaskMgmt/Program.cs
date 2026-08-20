@@ -20,7 +20,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
-        policy => policy.WithOrigins("http://localhost:4300", "https://task-manager-two-liard-18.vercel.app").AllowAnyMethod().AllowAnyHeader());
+        policy => policy.WithOrigins("http://localhost:4300", "https://ambitious-field-0d3c25a00.7.azurestaticapps.net")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
 });
 
 builder.Services.AddAuthentication(options =>
@@ -54,6 +56,13 @@ using (var scope = app.Services.CreateScope())
     app.Logger.LogInformation("Migrations completed.");
 }
 
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+
 app.MapOpenApi();
 
 app.UseSwaggerUI(options =>
@@ -61,12 +70,6 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/openapi/v1.json", "Task Management API");
     options.RoutePrefix = "swagger";
 });
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
 
 app.UseRouting();
 
