@@ -56,8 +56,9 @@ using (var scope = app.Services.CreateScope())
     // Pre-warm the connection pool
     try
     {
-        await db.Database.ExecuteSqlAsync($"SELECT 1");
-        app.Logger.LogInformation("Database connection pool warmed up.");
+        var canConnect = await db.Database.CanConnectAsync();
+        if (canConnect)
+            app.Logger.LogInformation("Database connection successful.");
     }
     catch (Exception ex)
     {
