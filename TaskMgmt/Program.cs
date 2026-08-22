@@ -47,13 +47,22 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Auto-run migrations on startup
+// Auto-run migrations and warm up the connection pool on startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    app.Logger.LogInformation("Running database migrations...");
-    db.Database.Migrate();
-    app.Logger.LogInformation("Migrations completed.");
+    await db.Database.MigrateAsync();
+    
+    // Pre-warm the connection pool
+    try
+    {
+        await db.Database.ExecuteSqlAsync($"SELECT 1");
+        app.Logger.LogInformation("Database connection pool warmed up.");
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning($"Could not warm up connection pool: {ex.Message}");
+    }
 }
 
 // Configure the HTTP request pipeline.
