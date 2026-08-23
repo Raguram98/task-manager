@@ -61,9 +61,7 @@ jobs:
           sleep 30
 
       - name: Install EF Core CLI
-        run: |
-          otnet tool install --global dotnet-ef
-          dotnet tool update --global dotnet-ef  
+        run: dotnet tool install --global dotnet-ef
       
       - name: Run database migrations
         run: |
