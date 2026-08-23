@@ -59,14 +59,20 @@ jobs:
         run: |
           echo "Waiting for app to start..."
           sleep 30
+
+      - name: Install EF Core CLI
+        run: |
+          otnet tool install --global dotnet-ef
+          dotnet tool update --global dotnet-ef  
       
       - name: Run database migrations
         run: |
-          echo "Running EF Core migrations..."
+          echo "Running EF Core migrations..."s
           cd TaskMgmt
           dotnet ef database update --project TaskMgmt.csproj --startup-project TaskMgmt.csproj --configuration Release
         env:
           CONNECTIONSTRINGS__APPDB: ${{ secrets.DATABASE_CONNECTION_STRING }}
+          RUN_MIGRATIONS: "true"
         continue-on-error: true
       
       - name: Health check
