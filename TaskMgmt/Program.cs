@@ -48,21 +48,42 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 // Auto-run migrations and warm up the connection pool on startup
-using (var scope = app.Services.CreateScope())
+if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
-    
-    // Pre-warm the connection pool
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        var canConnect = await db.Database.CanConnectAsync();
-        if (canConnect)
-            app.Logger.LogInformation("Database connection successful.");
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+        
+        // Pre-warm the connection pool
+        try
+        {
+            var canConnect = await db.Database.CanConnectAsync();
+            if (canConnect)
+                app.Logger.LogInformation("Database connection successful.");
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning($"Could not warm up connection pool: {ex.Message}");
+        }
     }
-    catch (Exception ex)
+}
+else
+{
+    // Pre-warm connection pool even if we skip migrations
+    using (var scope = app.Services.CreateScope())
     {
-        app.Logger.LogWarning($"Could not warm up connection pool: {ex.Message}");
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        try
+        {
+            var canConnect = await db.Database.CanConnectAsync();
+            if (canConnect)
+                app.Logger.LogInformation("Database connection pool warmed up.");
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning($"Could not warm up connection pool: {ex.Message}");
+        }
     }
 }
 

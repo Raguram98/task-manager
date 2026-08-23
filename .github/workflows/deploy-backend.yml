@@ -7,8 +7,7 @@ on:
     paths:
       - 'TaskMgmt/**'
       - '.github/workflows/deploy-backend.yml'
-
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -17,73 +16,81 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '10.0.x'
-
+      
       - name: Restore dependencies
         run: |
           cd TaskMgmt
           dotnet restore
-
+      
       - name: Build
         run: |
           cd TaskMgmt
           dotnet build -c Release --no-restore
-
-      # Optional: Run tests if you have them
+      
       - name: Run tests (if applicable)
         run: |
           cd TaskMgmt
           # dotnet test -c Release --no-build --verbosity normal
         continue-on-error: true
-
+      
       - name: Publish
         run: |
           cd TaskMgmt
           dotnet publish -c Release -o ./publish --self-contained false --runtime linux-x64
-
+      
       - name: Create deployment package
         run: |
           cd TaskMgmt/publish
           zip -r ../../app.zip .
-
+      
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APPSERVICE_NAME }}
           publish-profile: ${{ secrets.AZURE_APPSERVICE_PUBLISH_PROFILE }}
           package: './app.zip'
-
+      
       - name: Wait for app startup
         run: |
           echo "Waiting for app to start..."
-          sleep 30  # Wait for 30 seconds to allow the app to start
-
+          sleep 30
+      
+      - name: Run database migrations
+        run: |
+          echo "Running EF Core migrations..."
+          cd TaskMgmt
+          dotnet ef database update --project TaskMgmt.csproj --startup-project TaskMgmt.csproj --configuration Release
+        env:
+          CONNECTIONSTRINGS__APPDB: ${{ secrets.DATABASE_CONNECTION_STRING }}
+        continue-on-error: true
+      
       - name: Health check
         run: |
           echo "Checking API health..."
           API_URL="https://${{ secrets.AZURE_APP_SERVICE_DOMAIN }}"
-    
+          
           for i in {1..5}; do
             echo "Attempt $i..."
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$API_URL/openapi/v1.json")
             echo "HTTP Status: $HTTP_CODE"
-      
+            
             if [ "$HTTP_CODE" = "200" ]; then
-            echo "✅ API is healthy"
-            exit 0
+              echo "✅ API is healthy"
+              exit 0
             fi
-      
+            
             echo "Retrying in 5 seconds..."
             sleep 5
           done
-    
+          
           echo "❌ API health check failed after 5 attempts"
           exit 1
-
+      
       - name: Deployment summary
         if: always()
         run: |
