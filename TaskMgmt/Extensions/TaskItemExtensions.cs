@@ -12,7 +12,8 @@ namespace TaskMgmt.Extensions
                 Id = task.Id,
                 Title = task.Title,
                 Description = task.Description,
-                IsCompleted = task.IsCompleted
+                IsCompleted = task.IsCompleted,
+                DueDate = task.DueDate
             };
         }
     }

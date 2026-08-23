@@ -39,6 +39,7 @@ namespace TaskMgmt.Service
                 Title = request.Title,
                 Description = request.Description,
                 IsCompleted = request.IsCompleted,
+                DueDate = request.DueDate,
                 UserId = userId
             };
 
@@ -61,7 +62,7 @@ namespace TaskMgmt.Service
                 task.Title = request.Title; 
                 task.Description = request.Description;
                 task.IsCompleted = request.IsCompleted;
-
+                task.DueDate = request.DueDate;
                 await _context.SaveChangesAsync();
 
                 return task;
