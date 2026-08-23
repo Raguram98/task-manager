@@ -52,6 +52,10 @@ export class EditTask implements OnInit {
       }
     });
   }
+ 
+  clearDueDate() {
+    this.form.patchValue({ dueDate: null });
+  }
 
   updateTask() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
