@@ -22,7 +22,8 @@ export class AddTask {
   // Validators run automatically — no manual if/else checks needed.
   form = this.fb.group({
     title:       ['', [Validators.required, Validators.minLength(2)]],
-    description: ['']
+    description: [''],
+    dueDate:    ['']
   });
 
   // Shortcut so the template can access form.get('title') more cleanly
@@ -33,7 +34,13 @@ export class AddTask {
       this.form.markAllAsTouched(); // shows validation errors
       return;
     }
-    const payload = { ...this.form.value, id: 0, isCompleted: false } as any;
+    const payload = {
+      ...this.form.value,
+      id: 0,
+      isCompleted: false,
+      dueDate: this.form.value.dueDate || null
+    } as any;
+
     this.taskService.addTask(payload).subscribe({
       next: () => { this.toast.success('Task created!'); this.router.navigate(['/tasks']); },
       error: ()  => this.toast.error('Failed to create task.')

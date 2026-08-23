@@ -26,6 +26,7 @@ export class EditTask implements OnInit {
     title:       ['', [Validators.required, Validators.minLength(2)]],
     description: [''],  
     isCompleted: [false],
+    dueDate: ['']
   });
 
   get titleCtrl() { return this.form.get('title')!; }
@@ -40,7 +41,8 @@ export class EditTask implements OnInit {
         this.form.patchValue({
           title:       task.title,
           description: task.description,
-          isCompleted: task.isCompleted
+          isCompleted: task.isCompleted,
+          dueDate:     task.dueDate  
         });
         this.loading.set(false);
       },

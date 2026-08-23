@@ -133,6 +133,14 @@
                 {{ task.description }}
               </p>
             }
+
+            <!-- DUE DATE -->
+            @if (task.dueDate) {
+              <p class="text-xs text-slate-400 mt-2">
+                Due: {{ task.dueDate | date: 'MMM dd, yyyy' }}
+             </p>
+            }
+
             <!-- Badge -->
             <div class="flex gap-2 mt-2 flex-wrap">
               <span class="text-xs px-2.5 py-0.5 rounded-full font-medium"

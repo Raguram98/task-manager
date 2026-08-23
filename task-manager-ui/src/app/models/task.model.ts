@@ -3,4 +3,5 @@ export interface TaskItem{
     title: string;
     description: string;
     isCompleted: boolean;
+    dueDate: string | null;
 }
