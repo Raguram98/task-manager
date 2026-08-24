@@ -93,6 +93,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.MapGet("/health", () => Results.Ok("OK"))
+    .WithName("Health")
+    .WithOpenApi();
+
 app.MapOpenApi();
 
 app.UseSwaggerUI(options =>
