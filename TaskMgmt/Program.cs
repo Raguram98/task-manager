@@ -94,8 +94,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.MapGet("/health", () => Results.Ok("OK"))
-    .WithName("Health")
-    .WithOpenApi();
+    .WithName("Health");
 
 app.MapOpenApi();
 
